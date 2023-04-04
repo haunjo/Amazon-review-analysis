@@ -1,4 +1,5 @@
 from list.bidirectNode import BidirectNode
+import pandas as pd
 
 class CircularDoublyLinkedListIterator:
     def __init__(self, alist):
@@ -15,12 +16,12 @@ class CircularDoublyLinkedListIterator:
 
 class CircularDoublyLinkedListFilter:
     def __init__(self, dataset):
-        self.list = []
+        self.list = [dataset.getNode(0).item.keys()]
         self.find(dataset)
     def find(self, dataset):
         for i in dataset:
-            if int(i['star_rating']) > 4:
-                self.list.append(i['product_title'])
+            if int(i['star_rating']) > 4 and 2 < int(i['review_date'][5:7]) < 7 and i['verified_purchase'] == 'Y':
+                self.list.append(i.values())
             
 
 
@@ -173,5 +174,7 @@ class CircularDoublyLinkedList:
         return CircularDoublyLinkedListIterator(self)
     
     def filter(self, data : CircularDoublyLinkedListFilter):
-        return set(data.list)
+        df = pd.DataFrame(data.list[1:], columns=data.list[0])
+        df = df.sort_values(by="product_title", key= lambda x : df.value_counts('product_title')[x], ascending= False)        
+        return df[:][['product_title', 'review_id', 'star_rating', 'helpful_votes', 'review_date']]
         

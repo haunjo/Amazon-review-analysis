@@ -1,5 +1,6 @@
-from circularDoublyLinkedList import *
+from src.circularDoublyLinkedList import *
 import pandas as pd
+from collections import Counter
 
 def load_data(dataset : CircularDoublyLinkedList):
     with open('amazon_shoes_100kreviews.tsv', 'r') as file:
@@ -11,16 +12,20 @@ def load_data(dataset : CircularDoublyLinkedList):
         
 
 def get_data(dataset : CircularDoublyLinkedList):
-    filtered = list(dataset.filter(CircularDoublyLinkedListFilter(dataset)))
-    i = 0
-    df = pd.DataFrame(filtered)
-    print(df.head())
-        
+    filtered = dataset.filter(CircularDoublyLinkedListFilter(dataset))
+    print(filtered.head())
+    return filtered
     
+def analyze_data(df):
+    print("-------- TOP 30 Hottest purchases on Spring season 2015 --------")
+    cnt = df.value_counts('product_title')
+    print(cnt)
+    result = pd.DataFrame({"product_title": cnt.index, "review_cnt" : cnt.values})
+    print(result[:30])
 if __name__ == '__main__':
     dataset = CircularDoublyLinkedList()
     load_data(dataset)
     dataset.pop(0)
-    # for i in range(0,10):
-    #     print(dataset.get(i))
-    get_data(dataset)
+    data = get_data(dataset)
+    print('\n');print('\n');print('\n')
+    analyze_data(data)
